@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useImperativeHandle, useState } from "react";
+import { InputTodo } from "./components/InputTodo";
+import { IncompleteTodos } from "./components/IncompleteTodos";
+import { CompleteTodos } from "./components/CompleteTodos";
 import "./styles.css";
 
 export const App = () => {
@@ -18,7 +21,7 @@ export const App = () => {
     setIncompleteTodos(newTodos);
     setInputTodo("");
   };
-  const onClickDelet = (index) => {
+  const onClickDelete = (index) => {
     const newTodos = [...incompleteTodos];
     newTodos.splice(index, 1);
     setIncompleteTodos(newTodos);
@@ -40,41 +43,21 @@ export const App = () => {
 
   return (
     <>
-      <div class="input-area">
-        <input
-          placeholder="ToDoを入力"
-          value={inputTodo}
-          onChange={onChangeText}
-        />
-        <button onClick={onClickTodo}>追加</button>
-      </div>
-      <div class="incomplete-area">
-        <p>未完了のToDo</p>
-        <ul>
-          {incompleteTodos.map((todo, index) => {
-            return (
-              <div key={todo}>
-                <li>{todo}</li>
-                <button onClick={() => onClickComplete(index)}>追加</button>
-                <button onClick={() => onClickDelet(index)}>削除</button>
-              </div>
-            );
-          })}
-        </ul>
-      </div>
-      <div class="complete-area">
-        <p>完了したToDo</p>
-        <ul>
-          {completeTodos.map((todo, index) => {
-            return (
-              <div key={todo}>
-                <li>{todo}</li>
-                <button onClick={() => onClickReplace(index)}>もどす</button>
-              </div>
-            );
-          })}
-        </ul>
-      </div>
+      <InputTodo
+        inputTodo={inputTodo}
+        onChange={onChangeText}
+        onClick={onClickTodo}
+        disabled={incompleteTodos.length >= 5}
+      />
+      {incompleteTodos.length >= 5 && (
+        <p style={{ color: "red" }}>登録できるtodoは5個までです</p>
+      )}
+      <IncompleteTodos
+        iTodos={incompleteTodos}
+        funcComplete={onClickComplete}
+        funcDelete={onClickDelete}
+      />
+      <CompleteTodos cTodos={completeTodos} funcIncomplete={onClickReplace} />
     </>
   );
 };
